@@ -1,6 +1,6 @@
 package person.ys.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -13,12 +13,12 @@ import person.ys.service.WeBotService;
  * @Date: 2021/4/20 17:27
  */
 @Configuration
-@ConditionalOnClass(WeBotService.class)
 @EnableConfigurationProperties(WeBotProperties.class)
 public class WeBotConfigurationUtils {
 
     @Bean
-    @ConditionalOnMissingBean(WeBotService.class)
+    @ConditionalOnMissingBean
+    @Autowired
     public WeBotService weBotService(WeBotProperties weBotProperties){
         return new WeBotService(weBotProperties);
     }
