@@ -1,0 +1,3 @@
+wework:
+  bot:
+    webHookUrl: https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=afddcfab-81dd-45a0-880e-66023664bee6
