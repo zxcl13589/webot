@@ -5,8 +5,6 @@ import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import person.ys.properties.WeBotProperties;
 
 import java.util.HashMap;
@@ -23,15 +21,35 @@ public class WeBotService {
 
     private WeBotProperties properties;
 
-    public void sendMarkDown(String message,String applicationName,String profile) {
+    public void sendMessage(String botName,String webHookUrl,String message) {
         Map body = new HashMap(){{
             put("msgtype", "markdown");
             put("markdown",new HashMap(){{
-                put("content","<font color=\"red\">" + applicationName + "</font>应用<font color=\"info\">" + profile + "</font>异常。\n" +">" + message);
+                put("content","<font color=\"red\">"+botName+"通知您</font>：\n" +">" + message);
             }});
         }};
-        HttpRequest.post(properties.getWebHookUrl())
+
+        HttpRequest.post(webHookUrl)
                 .body(JSONUtil.toJsonStr(body))
                 .execute();
+    }
+
+    public void sendByBotId(String key,String message) {
+        properties.getConfigMap().forEach(configMap -> {
+            WeBotProperties.Config config = configMap.get(key);
+            if(config != null  && config.getEnable()){
+                sendMessage(config.getBotName(),config.getWebHookUrl(),message);
+            }
+        });
+    }
+
+    public void sendAll(String message) {
+        properties.getConfigMap().forEach(configMap -> {
+            configMap.values().forEach(config -> {
+                if(config != null  && config.getEnable()){
+                    sendMessage(config.getBotName(),config.getWebHookUrl(),message);
+                }
+            });
+        });
     }
 }
